@@ -1,0 +1,5 @@
+scipy
+zmq
+imagezmq
+tk
+_tkinter

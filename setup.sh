@@ -1,6 +1,6 @@
 if [[ $(uname -p) == 'arm' ]]; then
-  ibrew install python-tk
-  ibrew install pillow
+  arch -x86_64 /usr/local/bin/brew install python-tk
+  arch -x86_64 /usr/local/bin/brew install pillow
 else
   brew install python-tk
   brew install pillow

@@ -3,7 +3,7 @@
 ## Requirements
 
 - Python 3.7.4 (!important)
-- Pip3 21.x.x (!imoportant)
+- Pip3 21.x.x (!important)
 
 ## Installation
 

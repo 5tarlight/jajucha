@@ -86,7 +86,8 @@ class LaneDetector:
         maxima = sorted(np.concatenate((maxima, maxima_near)))
         maxima = np.delete(maxima, np.argwhere(np.ediff1d(maxima) < 30) + 1)
         maxima = np.delete(maxima, np.where(np.isin(maxima, maxima_near)))
-        maxima = sorted(maxima_near, key=lambda x: abs(x - 250)) + sorted(maxima, key=lambda x: abs(x - 250))
+        maxima = sorted(maxima_near, key=lambda x: abs(x - 250)) + \
+            sorted(maxima, key=lambda x: abs(x - 250))
         # print(maxima_near, maxima)
         # Sliding Windows
         height = warp.shape[0]
@@ -100,7 +101,8 @@ class LaneDetector:
             if line_points is not None:
                 line_points, centers = line_points
                 line = self.cam.unWarpPts(line_points)
-                centers = self.cam.unWarpPts(np.array(centers, dtype=np.float32))
+                centers = self.cam.unWarpPts(
+                    np.array(centers, dtype=np.float32))
                 result.append((line_points, line, centers))
         self.imshow('aux', aux)
         result.sort(key=lambda x: x[0][0, 0])
@@ -134,7 +136,8 @@ class LaneDetector:
             if aux is not None:
                 cv2.rectangle(aux, (int(x0), int(y0)), (int(x1), int(y1)),
                               (255 * (window / windows), 255 * (windows - window) / windows, 0), 2)
-            pts_in_window, = ((y0 <= pts_y) & (pts_y < y1) & (x0 <= pts_x) & (pts_x < x1)).nonzero()
+            pts_in_window, = ((y0 <= pts_y) & (pts_y < y1) & (
+                x0 <= pts_x) & (pts_x < x1)).nonzero()
             point_ids.append(pts_in_window)
             if len(pts_in_window) > thresh:
                 cur_x = np.mean(pts_x[pts_in_window])
@@ -174,7 +177,8 @@ class LaneDetector:
             line_y = np.arange(min_y, max_y + 15, 15)
             line_x = f(line_y)
             # print(line_x)
-            self.explored.append((min_x - half_width / 2, max_x + half_width / 2))
+            self.explored.append(
+                (min_x - half_width / 2, max_x + half_width / 2))
             return np.column_stack((np.array(line_x, dtype=np.int), np.array(line_y, dtype=np.int))), centers
         except:
             traceback.print_exc()
@@ -218,13 +222,15 @@ class LaneDetector:
             raise ValueError("smooth only accepts 1 dimension arrays.")
 
         if x.size < window_len:
-            raise ValueError("Input vector needs to be bigger than window size.")
+            raise ValueError(
+                "Input vector needs to be bigger than window size.")
 
         if window_len < 3:
             return x
 
         if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-            raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
+            raise ValueError(
+                "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
 
         s = np.r_[x[window_len - 1:0:-1], x, x[-2:-window_len - 1:-1]]
         # print(len(s))
@@ -244,9 +250,11 @@ class LaneDetector:
         edge = self.canny(img)
         u_max, v_max = 639, 479
         c_v, c_u = int(self.cam.c_v), int(self.cam.c_u)
-        v_bounds = [int(c_v + (v_max - c_v) * i / (rows + 1)) for i in range(1, rows + 1)]
+        v_bounds = [int(c_v + (v_max - c_v) * i / (rows + 1))
+                    for i in range(1, rows + 1)]
         u_bounds = [int(u_max * i / (cols + 1)) for i in range(1, cols + 1)]
-        img2 = self.drawGrid(img2, v_bounds, u_bounds, u_max, v_max, c_v, c_u, grid_line_color)
+        img2 = self.drawGrid(img2, v_bounds, u_bounds, u_max,
+                             v_max, c_v, c_u, grid_line_color)
         # print(v_max - c_v + 1)  # 255, 232
         # print(c_u + 1)  # 325, 400
         # print(u_max - c_u + 1)  # 316, 241
@@ -326,8 +334,10 @@ class LightDetector:
         g_range = cv2.dilate(g_range, kernel)
         g_range = cv2.bitwise_and(v, v, mask=g_range)
 
-        red = cv2.HoughCircles(r_range, cv2.HOUGH_GRADIENT, 1, 50, param1=200, param2=12, minRadius=3, maxRadius=10)
-        green = cv2.HoughCircles(g_range, cv2.HOUGH_GRADIENT, 1, 50, param1=200, param2=14, minRadius=3, maxRadius=10)
+        red = cv2.HoughCircles(r_range, cv2.HOUGH_GRADIENT, 1,
+                               50, param1=200, param2=12, minRadius=3, maxRadius=10)
+        green = cv2.HoughCircles(g_range, cv2.HOUGH_GRADIENT, 1,
+                                 50, param1=200, param2=14, minRadius=3, maxRadius=10)
 
         reds, greens = [], []
 
@@ -362,8 +372,7 @@ class BasePlanning:
                                [0., 0., 1.]], dtype=np.float32),
                      np.array([[2., 0., -500.],
                                [0, -2., 740.],
-                               [0., 0., 1.]], dtype=np.float32)
-                     , flip=True)
+                               [0., 0., 1.]], dtype=np.float32), flip=True)
     RearLaneDetector = LaneDetector(RearCam, 'rear')
     FrontLightDetector = LightDetector(int(mtx[1, 2]), 'front')
     RearLightDetector = LightDetector(int(mtx2[1, 2]), 'rear')

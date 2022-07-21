@@ -30,10 +30,11 @@ logger.addHandler(log_handler)
 # objp[:,:2] = np.mgrid[0:9, 0:7].T.reshape(-1, 2)
 # objp *= 20
 
-mtx = np.array([[309.07332417, 0., 319.4646727], #mtx = np.array([[309.07332417, 0., 324.4646727],
+mtx = np.array([[309.07332417, 0., 319.4646727],  # mtx = np.array([[309.07332417, 0., 324.4646727],
                 [0., 309.49421445, 225.88178544],
                 [0., 0., 1.]], dtype=np.float32)
-dist = np.array([[-0.28743189, 0.07504807, -0.00050962, 0.00069096, -0.00815296]], dtype=np.float32)
+dist = np.array([[-0.28743189, 0.07504807, -0.00050962,
+                0.00069096, -0.00815296]], dtype=np.float32)
 # newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (640, 480), 0, (640, 480))
 
 # imgpoints2 = []
@@ -43,7 +44,8 @@ dist = np.array([[-0.28743189, 0.07504807, -0.00050962, 0.00069096, -0.00815296]
 mtx2 = np.array([[395.52784006, 0., 239.21418142],
                  [0., 395.130504, 230.42492257],
                  [0., 0., 1.]])
-dist2 = np.array([[-0.31976223, 0.10018421, -0.00051188, -0.00091223, -0.01348978]])
+dist2 = np.array(
+    [[-0.31976223, 0.10018421, -0.00051188, -0.00091223, -0.01348978]])
 
 
 # newcameramtx2, roi = cv2.getOptimalNewCameraMatrix(mtx2, dist2, (640, 480), 0, (640, 480))
@@ -74,7 +76,8 @@ class BaseControl:
             assert math.isfinite(steer)
             assert math.isfinite(velocity)
         except:
-            error = ValueError(repr(command) + ' is not a valid return for process()')
+            error = ValueError(
+                repr(command) + ' is not a valid return for process()')
             self.graphics.setCommandText(f'런타임 에러: {repr(error)}')
             traceback.print_exception(ValueError, error, None)
             command = 0, 0
@@ -88,7 +91,8 @@ class DriveControl(BaseControl):
     def __init__(self, graphics, address):
         super().__init__(graphics)
         self.address = address
-        self.receiver = communication.VideoStreamSubscriber(*config.image_address)
+        self.receiver = communication.VideoStreamSubscriber(
+            *config.image_address)
         self._halt = False
         self._fImg = None
         self._rImg = None
@@ -114,17 +118,21 @@ class DriveControl(BaseControl):
                         self.graphics.btnStartStop['state'] = tkinter.NORMAL
                         self.graphics.setCommandText('자주차에 연결되었습니다.')
                     else:
-                        tkinter.messagebox.showinfo('연결 오류', '강제 연결에 실패했습니다.\n 자주차를 재부팅 해주세요.')
+                        tkinter.messagebox.showinfo(
+                            '연결 오류', '강제 연결에 실패했습니다.\n 자주차를 재부팅 해주세요.')
 
             else:
                 self.graphics.btnStartStop['state'] = tkinter.NORMAL
                 self.graphics.setCommandText('자주차에 연결되었습니다.')
             while not self._halt:
-                self._fImg = cv2.imdecode(np.frombuffer(front, dtype='uint8'), -1)
-                self._rImg = cv2.imdecode(np.frombuffer(rear, dtype='uint8'), -1)
+                self._fImg = cv2.imdecode(
+                    np.frombuffer(front, dtype='uint8'), -1)
+                self._rImg = cv2.imdecode(
+                    np.frombuffer(rear, dtype='uint8'), -1)
                 self._rImg = cv2.rotate(self._rImg, cv2.ROTATE_180)
                 _t, self._fLdr, self._rLdr = msg.split()
-                _t, self._fLdr, self._rLdr = float(_t), int(self._fLdr), int(self._rLdr)
+                _t, self._fLdr, self._rLdr = float(
+                    _t), int(self._fLdr), int(self._rLdr)
 
                 # logger.debug("latency: %.3f"%(time.time()-_t))
                 self.graphics.setFrontLidar(self._fLdr)
@@ -136,7 +144,8 @@ class DriveControl(BaseControl):
                 self.t = t
                 if self._live and self._save:
                     prefix = "%06.2f %d %d" % (t, self._fLdr, self._rLdr)
-                    cv2.imwrite(prefix + ',front.jpg', self._fImg)  # Replace Unix Time with time since run
+                    # Replace Unix Time with time since run
+                    cv2.imwrite(prefix + ',front.jpg', self._fImg)
                     cv2.imwrite(prefix + ',rear.jpg', self._rImg)
                     logging.debug(prefix)
 
@@ -146,17 +155,20 @@ class DriveControl(BaseControl):
                 self.graphics.setFrontImage1(self._fImg)
                 self.graphics.setRearImage1(self._rImg)
 
-                command = self.process(self.t, self._fImg, self._rImg, self._fLdr, self._rLdr)
+                command = self.process(
+                    self.t, self._fImg, self._rImg, self._fLdr, self._rLdr)
 
                 if self._live:
                     rtn = self.client.sendCommand(*command)
                     if not rtn:
-                        tkinter.messagebox.showerror('연결 오류', '자주차 연결이 강제로 해제되었습니다.')
+                        tkinter.messagebox.showerror(
+                            '연결 오류', '자주차 연결이 강제로 해제되었습니다.')
                         raise RuntimeError('Connection Reset')
                 elif self.client.id is not None:
                     rtn = self.client.sendCommand(0, 0)
                     if not rtn:
-                        tkinter.messagebox.showerror('연결 오류', '자주차 연결이 강제로 해제되었습니다.')
+                        tkinter.messagebox.showerror(
+                            '연결 오류', '자주차 연결이 강제로 해제되었습니다.')
                         raise RuntimeError('Connection Reset')
 
                 msg, front, rear = self.receiver.receive()
@@ -189,7 +201,8 @@ class DriveControl(BaseControl):
                 if not tkinter.messagebox.askyesno("주행 저장 실패", "저장 경로에 이미지 파일이 있어 저장할 수 없습니다.\n주행을 계속할까요?"):
                     return False
                 else:
-                    tkinter.messagebox.showinfo("주행 안내", "주행을 시작합니다.\n이미지를 저장하지 않습니다.")
+                    tkinter.messagebox.showinfo(
+                        "주행 안내", "주행을 시작합니다.\n이미지를 저장하지 않습니다.")
                     self._save = False
         else:
             self._save = False
@@ -287,7 +300,8 @@ class ImageControl(BaseControl):
             self._rImg = cv2.imread(self.imList[2 * index + 1])
             msg = self.imList[2 * index].split(',')[0]
             self.t, self._fLdr, self._rLdr = msg.split()
-            self.t, self._fLdr, self._rLdr = float(self.t), int(self._fLdr), int(self._rLdr)
+            self.t, self._fLdr, self._rLdr = float(
+                self.t), int(self._fLdr), int(self._rLdr)
 
             self._fImg = cv2.undistort(self._fImg, mtx, dist, None, None)
             self._rImg = cv2.undistort(self._rImg, mtx2, dist2, None, None)
@@ -298,7 +312,8 @@ class ImageControl(BaseControl):
             self.graphics.setFrontLidar(self._fLdr)
             self.graphics.setRearLidar(self._rLdr)
 
-            command = self.process(self.t, self._fImg, self._rImg, self._fLdr, self._rLdr)
+            command = self.process(
+                self.t, self._fImg, self._rImg, self._fLdr, self._rLdr)
 
         except Exception as e:
             print('Error in Imageshow:', e)

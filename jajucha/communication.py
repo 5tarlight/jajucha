@@ -59,7 +59,8 @@ class VideoStreamSubscriber:
         return self._msg, self._front, self._back
 
     def _run(self):
-        receiver = imagezmq.ImageHub("tcp://{}:{}".format(self.hostname, self.port), REQ_REP=False)
+        receiver = imagezmq.ImageHub(
+            "tcp://{}:{}".format(self.hostname, self.port), REQ_REP=False)
         while not self._stop:
             msg, frame = receiver.recv_jpg()
             msg = msg.split(',')
@@ -168,7 +169,7 @@ if __name__ == '__main__':
     # Initialize image SUB first!
     ##ctx = zmq.Context()
     ##sock = ctx.socket(zmq.REQ)
-    ##sock.connect("tcp://%s:%d"%config.address)
+    # sock.connect("tcp://%s:%d"%config.address)
     ##sock.send_string("INIT "+ip)
     ##res = sock.recv_string()
     ##

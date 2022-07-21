@@ -1,6 +1,7 @@
 from jajucha.planning import BasePlanning
 from jajucha.graphics import Graphics
 from jajucha.control import mtx
+from jajucha.MyCar import MyCar
 import cv2
 import numpy as np
 import time
@@ -15,6 +16,7 @@ class Planning(BasePlanning):
         self.vars.stop = True
         self.vars.steer = 0
         self.vars.velocity = 0
+        self.my = MyCar()
 
     def process(self, t, frontImage, rearImage, frontLidar, rearLidar):
         """
@@ -29,6 +31,7 @@ class Planning(BasePlanning):
         # [1] 라이다 처리
 
         # canny 이미지 보기
+        print(frontImage)
         canny = self.canny(frontImage)
         self.imshow('canny', canny)
 

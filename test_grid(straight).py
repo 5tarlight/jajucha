@@ -29,8 +29,8 @@ class Planning(BasePlanning):
         # 직진 주행
 
         # canny 이미지 보기
-        canny = self.canny(frontImage)
-        self.imshow('canny', canny)
+        # canny = self.canny(frontImage)
+        # self.imshow('canny', canny)
 
         # 차선 정보 파악
         V, L, R = self.gridFront(frontImage, cols=7, rows=3)
@@ -47,7 +47,7 @@ class Planning(BasePlanning):
         if R[2] == 316:  # R[i]가 잡히지 않은 경우  (중앙 픽셀이 324라서 오른쪽으로 최대 315)
             ...
         e = 0
-        steer = 0
+        steer = -18
         velocity = 40
 
         print('L[0]=', L[0], 'L[1]=', L[1], 'L[2]=', L[2], end="  //  ")

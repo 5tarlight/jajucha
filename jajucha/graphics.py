@@ -25,7 +25,8 @@ class Graphics:
         self.view_frame.grid_propagate(False)
         self.control_frame.grid_propagate(False)
 
-        self.front_frame = tkinter.Frame(self.view_frame, width=700, height=280)
+        self.front_frame = tkinter.Frame(
+            self.view_frame, width=700, height=280)
         self.back_frame = tkinter.Frame(self.view_frame, width=700, height=280)
         self.text_frame = tkinter.Frame(self.view_frame, width=700, height=60)
         self.front_frame.grid(row=1, column=1)
@@ -35,8 +36,10 @@ class Graphics:
         self.back_frame.grid_propagate(False)
         self.text_frame.grid_propagate(False)
 
-        self.imgFront1 = tkinter.Label(self.front_frame, width=320, height=240, bg='white', bitmap='question')
-        self.imgFront2 = tkinter.Label(self.front_frame, width=320, height=240, bg='white', bitmap='question')
+        self.imgFront1 = tkinter.Label(
+            self.front_frame, width=320, height=240, bg='white', bitmap='question')
+        self.imgFront2 = tkinter.Label(
+            self.front_frame, width=320, height=240, bg='white', bitmap='question')
         self.imgFront1.grid(row=1, column=1, padx=(15, 10), pady=(5, 5))
         self.imgFront2.grid(row=1, column=2, padx=(10, 15), pady=(5, 5))
         self.imgFront1.grid_propagate(False)
@@ -45,14 +48,17 @@ class Graphics:
         self.varTxtFront = tkinter.StringVar()
         self.varTxtFront.set("전면 LiDAR: ????mm")
         self.txtFront1 = tkinter.Label(self.front_frame, text="전면 카메라")
-        self.txtFront2 = tkinter.Label(self.front_frame, textvariable=self.varTxtFront)
+        self.txtFront2 = tkinter.Label(
+            self.front_frame, textvariable=self.varTxtFront)
         self.txtFront1.grid(row=2, column=1)
         self.txtFront2.grid(row=2, column=2)
         self.txtFront1.grid_propagate(False)
         self.txtFront2.grid_propagate(False)
 
-        self.imgBack1 = tkinter.Label(self.back_frame, width=320, height=240, bg='white', bitmap='question')
-        self.imgBack2 = tkinter.Label(self.back_frame, width=320, height=240, bg='white', bitmap='question')
+        self.imgBack1 = tkinter.Label(
+            self.back_frame, width=320, height=240, bg='white', bitmap='question')
+        self.imgBack2 = tkinter.Label(
+            self.back_frame, width=320, height=240, bg='white', bitmap='question')
         self.imgBack1.grid(row=1, column=1, padx=(15, 10), pady=(5, 5))
         self.imgBack2.grid(row=1, column=2, padx=(10, 15), pady=(5, 5))
         self.imgBack1.grid_propagate(False)
@@ -61,7 +67,8 @@ class Graphics:
         self.varTxtBack = tkinter.StringVar()
         self.varTxtBack.set("후면 LiDAR: ????mm")
         self.txtBack1 = tkinter.Label(self.back_frame, text="후면 카메라")
-        self.txtBack2 = tkinter.Label(self.back_frame, textvariable=self.varTxtBack)
+        self.txtBack2 = tkinter.Label(
+            self.back_frame, textvariable=self.varTxtBack)
         self.txtBack1.grid(row=2, column=1)
         self.txtBack2.grid(row=2, column=2)
         self.txtBack1.grid_propagate(False)
@@ -74,21 +81,23 @@ class Graphics:
 
         self.varTxtCommand = tkinter.StringVar()
         self.varTxtCommand.set("조향: ???, 속도: ???")
-        self.txtCommand = tkinter.Label(self.text_frame, textvariable=self.varTxtCommand)
+        self.txtCommand = tkinter.Label(
+            self.text_frame, textvariable=self.varTxtCommand)
         self.txtCommand.pack(pady=0)
 
         self.varTxtTime = tkinter.StringVar()
         self.setTime(0)
-        self.txtTime = tkinter.Label(self.control_frame, textvariable=self.varTxtTime)
+        self.txtTime = tkinter.Label(
+            self.control_frame, textvariable=self.varTxtTime)
         self.txtTime.grid(row=7, column=1, sticky='w', pady=(120, 0))
         self.txtTime.grid_propagate(False)
 
         self.runMode = tkinter.IntVar()
         self.runMode.set(0)
         self.runMode.trace("w", lambda *args: self.callback_change_mode())
-        self.btnModeDrive = tkinter.Radiobutton(self.control_frame, text="주행 모드", \
+        self.btnModeDrive = tkinter.Radiobutton(self.control_frame, text="주행 모드",
                                                 value=0, variable=self.runMode)
-        self.btnModeImage = tkinter.Radiobutton(self.control_frame, text="재생 모드", \
+        self.btnModeImage = tkinter.Radiobutton(self.control_frame, text="재생 모드",
                                                 value=1, variable=self.runMode)
         self.btnModeDrive.grid(row=1, column=1, sticky='w')
         self.btnModeImage.grid(row=4, column=1, sticky='w', pady=(130, 0))
@@ -96,30 +105,38 @@ class Graphics:
         self.runSave = tkinter.IntVar()
         self.runSave.set(0)
         self.runSave.trace("w", lambda *args: self.callback_change_save())
-        self.btnDriveSave = tkinter.Checkbutton(self.control_frame, text="주행 저장", \
+        self.btnDriveSave = tkinter.Checkbutton(self.control_frame, text="주행 저장",
                                                 onvalue=1, offvalue=0, variable=self.runSave)
         self.btnDriveSave.grid(row=2, column=1, sticky='w')
         self.varTxtSavePath = tkinter.StringVar()
         self.varTxtSavePath.set("저장할 폴더를 선택하세요.")
-        self.lblDriveSave = tkinter.Label(self.control_frame, textvariable=self.varTxtSavePath)
-        self.btnFindSavePath = tkinter.Button(self.control_frame, text="폴더 찾기", command=self.callback_save_dir)
+        self.lblDriveSave = tkinter.Label(
+            self.control_frame, textvariable=self.varTxtSavePath)
+        self.btnFindSavePath = tkinter.Button(
+            self.control_frame, text="폴더 찾기", command=self.callback_save_dir)
         self.lblDriveSave.grid(row=3, column=1, sticky='w')
         self.btnFindSavePath.grid(row=3, column=2, sticky='w')
         self.saveLocation = None
 
         self.varTxtLoadPath = tkinter.StringVar()
         self.varTxtLoadPath.set("불러올 폴더를 선택하세요.")
-        self.lblImageLoad = tkinter.Label(self.control_frame, textvariable=self.varTxtLoadPath)
-        self.btnFindLoadPath = tkinter.Button(self.control_frame, text="폴더 찾기", command=self.callback_load_dir)
+        self.lblImageLoad = tkinter.Label(
+            self.control_frame, textvariable=self.varTxtLoadPath)
+        self.btnFindLoadPath = tkinter.Button(
+            self.control_frame, text="폴더 찾기", command=self.callback_load_dir)
         self.lblImageLoad.grid(row=5, column=1, sticky='w')
         self.btnFindLoadPath.grid(row=5, column=2, sticky='w')
         self.loadLocation = None
 
         self.ImageControlFrame = tkinter.Frame(self.control_frame)
-        self.btnBefore = tkinter.Button(self.ImageControlFrame, text="-1", command=self.callback_before)
-        self.btnBefore10 = tkinter.Button(self.ImageControlFrame, text="-10", command=self.callback_before10)
-        self.btnNext = tkinter.Button(self.ImageControlFrame, text="+1", command=self.callback_next)
-        self.btnNext10 = tkinter.Button(self.ImageControlFrame, text="+10", command=self.callback_next10)
+        self.btnBefore = tkinter.Button(
+            self.ImageControlFrame, text="-1", command=self.callback_before)
+        self.btnBefore10 = tkinter.Button(
+            self.ImageControlFrame, text="-10", command=self.callback_before10)
+        self.btnNext = tkinter.Button(
+            self.ImageControlFrame, text="+1", command=self.callback_next)
+        self.btnNext10 = tkinter.Button(
+            self.ImageControlFrame, text="+10", command=self.callback_next10)
         self.ImageControlFrame.grid(row=6, column=1, sticky='w')
         self.btnBefore10.grid(row=1, column=1, padx=(0, 1))
         self.btnBefore.grid(row=1, column=2, padx=(1, 1))
@@ -128,7 +145,7 @@ class Graphics:
 
         self.varTxtStartStop = tkinter.StringVar()
         self.varTxtStartStop.set("준비")
-        self.btnStartStop = tkinter.Button(self.control_frame, textvariable=self.varTxtStartStop, \
+        self.btnStartStop = tkinter.Button(self.control_frame, textvariable=self.varTxtStartStop,
                                            command=self.callback_start_stop)
         self.btnStartStop.grid(row=8, column=1, sticky='nwse')
 
@@ -153,7 +170,8 @@ class Graphics:
         self.varTxt.set(value)
 
     def setCommand(self, steer, velocity):  # angle, velocity: float
-        self.varTxtCommand.set("조향: %+04d, 속도: %+06.1fmm/s" % (steer, velocity))
+        self.varTxtCommand.set(
+            "조향: %+04d, 속도: %+06.1fmm/s" % (steer, velocity))
 
     def setTime(self, value):  # value: Float
         self.varTxtTime.set("시간: %06.2fs" % value)

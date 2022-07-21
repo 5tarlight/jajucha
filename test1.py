@@ -5,6 +5,7 @@ from jajucha.MyCar import MyCar
 import cv2
 import numpy as np
 import time
+import math
 
 
 class Planning(BasePlanning):
@@ -31,9 +32,9 @@ class Planning(BasePlanning):
         # [1] 라이다 처리
 
         # canny 이미지 보기
-        print(frontImage)
-        canny = self.canny(frontImage)
-        self.imshow('canny', canny)
+        # print(frontImage)
+        # canny = self.canny(frontImage)
+        # self.imshow('canny', canny)
 
         # 차선 정보 파악
         V, L, R = self.gridFront(frontImage, cols=7, rows=3)
@@ -45,30 +46,60 @@ class Planning(BasePlanning):
         # 각 변수의 최댓값
         if V[3] == 255:  # V[i]가 잡히지 않은 경우
             ...
-        if L[2] == 325:  # L[i]가 잡히지 않은 경우  (중앙 픽셀이 324라서 왼쪽으로 최대 324)
-            ...
-        if R[2] == 316:  # R[i]가 잡히지 않은 경우  (중앙 픽셀이 324라서 오른쪽으로 최대 315)
-            ...
-
-        # [2] 주행 처리
-        if L[2] < 325:  # L[2]는 잡히고 R[2]는 잡히지 않은 경우
-            #print ('Left Line', end="// ")
-            e = 334 - L[2]
-
-        # 둘 다 잡히지 않은 경우
+        if L[2] >= 320:  # L[i]가 잡히지 않은 경우  (중앙 픽셀이 324라서 왼쪽으로 최대 324)
+            e = -90
+        elif R[2] >= 305:  # R[i]가 잡히지 않은 경우  (중앙 픽셀이 324라서 오른쪽으로 최대 315)
+            e = 90
         else:
-            e = 0
-        # else:
-        #    return self.vars.steer, self.vars.velocity  # 이전 명령
+            arr1 = []
+            arr2 = []
 
-        #cv2.imshow('Front Grid Image', frontImage)
+            # 왼쪽 라인과 오른쪽 라인의 기울기 비교
+            if (V[0] < 255 and V[1] < 255):
+                d = V[1] - V[0]
+                if (d > 0):
+                    arr1.append(d)
+            if (V[1] < 255 and V[2] < 255):
+                d = V[2] - V[1]
+                if (d > 0):
+                    arr1.append(d)
 
-        steer = int(e / 3) - 6  # 계수 1/3, 조정 -6
+            if (V[0] < 255 and V[2] < 255):
+                d = V[2] - V[0]
+                if (d > 0):
+                    arr1.append(d)
+
+            # right
+            if (V[0+4] < 255 and V[1+4] < 255):
+                d = V[1+4] - V[0+4]
+                if (d < 0):
+                    arr2.append(d)
+            if (V[1+4] < 255 and V[2+4] < 255):
+                d = V[2+4] - V[1+4]
+                if (d < 0):
+                    arr2.append(d)
+
+            if (V[0+4] < 255 and V[2+4] < 255):
+                d = V[2+4] - V[0+4]
+                if (d < 0):
+                    arr2.append(d)
+
+            # 유효한 기울기 중 가장 가파른 것 찾기 (다른 곳으로 튀었을때 대비)
+            # 중심일때 서로 절댓값 일치(세로축 대칭)
+            if (len(arr1) == 0):
+                arr1.append(0)
+            if (len(arr2) == 0):
+                arr2.append(0)
+            d1 = max(arr1)
+            d2 = abs(min(arr2))
+
+            e = abs(d1 - d2) * 0.7
+
+        steer = int(e / math.pi) - 16  # 계수 1/3, 조정 -6
         if steer > 100:
             steer = 100
         elif steer < -100:
             steer = -100
-        steer = 0
         velocity = 40
 
         print('L[0]=', L[0], 'L[1]=', L[1], 'L[2]=', L[2], end="  //  ")

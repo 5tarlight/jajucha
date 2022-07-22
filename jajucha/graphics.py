@@ -222,7 +222,8 @@ class Graphics:
             self.varTxtStartStop.set('재생')
 
     def callback_save_dir(self):
-        location = tkinter.filedialog.askdirectory(title="저장할 경로 선택")
+        location = tkinter.filedialog.askdirectory(
+            title="저장할 경로 선택",  initialdir='./')
         if not location:
             return
         self.saveLocation = location
@@ -231,7 +232,8 @@ class Graphics:
         # Setting accessed at time of 'start'
 
     def callback_load_dir(self):
-        location = tkinter.filedialog.askdirectory(title="불러올 경로 선택")
+        location = tkinter.filedialog.askdirectory(
+            title="불러올 경로 선택", initialdir='./')
         if not location:
             return
         self.loadLocation = location

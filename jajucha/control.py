@@ -237,7 +237,10 @@ class ImageControl(BaseControl):
         super().__init__(graphics)
         self.path = path
         os.chdir(path)
-        self.imList = glob.glob('*.jpg')
+        """
+        **BUG image sorted by unexpectedly
+        """
+        self.imList = sorted(glob.glob('*.jpg'))
         self.len = len(self.imList) // 2
         if self.len < 1:
             self.graphics.setCommandText('경로에 이미지가 없습니다. 경로를 확인해주세요.')
@@ -280,6 +283,7 @@ class ImageControl(BaseControl):
 
     def next(self):
         self.index = min(self.index + 1, self.len - 1)
+        # print(self.index)
         self.update(self.index)
 
     def before(self):
@@ -296,6 +300,7 @@ class ImageControl(BaseControl):
 
     def update(self, index):
         try:
+            # print(self.imList)
             self._fImg = cv2.imread(self.imList[2 * index])
             self._rImg = cv2.imread(self.imList[2 * index + 1])
             msg = self.imList[2 * index].split(',')[0]

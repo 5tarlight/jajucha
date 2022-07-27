@@ -18,6 +18,7 @@ class MyCar:
         print('[steer=', steer, end="]  ")
         print('[waiting=', waiting, end="]  ")
         print('[velocity=', velocity, "]")
+        print('[road=', self.checkRoad(V, L, R), "]")
         print()
 
     def getSteer(self, e):
@@ -35,6 +36,27 @@ class MyCar:
 
     def leftVDiff(V):
         return [V[1] - V[0], V[2] - V[1]]
+
+    def rightVDiff(V):
+        return [V[1+4] - V[0+4], V[2+4] - V[1+4]]
+
+    def checkRoad(self, V, L, R):
+        leftV = self.leftVDiff(V)
+        rightV = self.rightVDiff(V)
+
+        if (
+            (sorted(leftV, reverse=True) == leftV) and
+            (sorted(rightV, reverse=True) == rightV) and
+            leftV[-1] > rightV[0]
+        ):
+            return 'left'
+        elif ((sorted(leftV) == leftV) and
+              (sorted(rightV) == rightV) and
+              leftV[-1] < rightV[0]
+              ):
+            return 'right'
+        else:
+            return 'linear'
 
     def linear(self, L, R, V):
         # 각 변수의 최댓값

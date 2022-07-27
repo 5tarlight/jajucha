@@ -34,10 +34,10 @@ class MyCar:
     def getVel(self):
         return 40
 
-    def leftVDiff(V):
+    def leftVDiff(seft, V):
         return [V[1] - V[0], V[2] - V[1]]
 
-    def rightVDiff(V):
+    def rightVDiff(self, V):
         return [V[1+4] - V[0+4], V[2+4] - V[1+4]]
 
     def checkRoad(self, V, L, R):

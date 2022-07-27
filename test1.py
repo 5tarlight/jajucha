@@ -44,7 +44,20 @@ class Planning(BasePlanning):
         # rows : 행선값  cols : 열선값 (row, column) ex) rows=3 : 행선이 3개이고, 총 4개의 행 칸이 생성
         # L[0], L[1], L[2], R[0], R[1], R[2], V[0]~v[6]
 
-        steer, e, velocity = self.my.linear(L, R, V)
+        steer, e, velocity = 0, 0, 0
+        road = self.my.checkRoad(V, L, R)
+
+        if road == 'linear':
+            steer, e, velocity = self.my.linear(L, R, V)
+        elif road == 'left':
+            e = -90
+            steer = self.my.getSteer(e)
+            velocity = 40
+        elif road == 'right':
+            e = 90
+            steer = self.my.getSteer(e)
+            velocity = 40
+
         if not self.waiting and frontLidar < 200 and frontLidar > 0:
             velocity = 0
             self.waiting = True

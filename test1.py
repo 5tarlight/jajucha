@@ -17,6 +17,7 @@ class Planning(BasePlanning):
         self.vars.stop = True
         self.vars.steer = 0
         self.vars.velocity = 0
+        self.waiting = False
         self.my = MyCar()
 
     def process(self, t, frontImage, rearImage, frontLidar, rearLidar):
@@ -44,8 +45,21 @@ class Planning(BasePlanning):
         # L[0], L[1], L[2], R[0], R[1], R[2], V[0]~v[6]
 
         steer, e, velocity = self.my.linear(L, R, V)
+        if not self.waiting and frontLidar < 200 and frontLidar > 0:
+            velocity = 0
+            self.waiting = True
+        elif self.waiting and frontLidar == 0:
+            velocity = 0
+        elif self.waiting and frontLidar < 200:
+            velocity = 0
+        elif self.waiting:
+            self.waiting = False
 
-        self.my.displayData(L, R, V, frontLidar, rearLidar, e, steer, velocity)
+        if velocity == 0:
+            steer = self.my.b
+
+        self.my.displayData(L, R, V, frontLidar, rearLidar,
+                            e, steer, velocity, self.waiting)
 
         self.vars.steer = steer
         self.vars.velocity = velocity

@@ -7,15 +7,16 @@ class MyCar:
         self.b = -16
         print('My Car Initiatied')
 
-    def displayData(self, L, R, V, frontLidar, rearLidar, e, steer, velocity):
+    def displayData(self, L, R, V, frontLidar, rearLidar, e, steer, velocity, waiting):
         print('L[0]=', L[0], 'L[1]=', L[1], 'L[2]=', L[2], end="  //  ")
         print('R[0]=', R[0], 'R[1]=', R[1], 'R[2]=', R[2])
         print('V[0]=', V[0], 'V[1]=', V[1], 'V[2]=', V[2], 'V[3]=',
               V[3], 'V[4]=', V[4], 'V[5]=', V[5], 'V[6]=', V[6])
         print('frontLidar=', frontLidar, end="..//..")
         print('rearLidar=', rearLidar, end="       => => =>    ")
-        print('[e=', e, end="]  ")
+        print('[e=', math.floor(e * 10) / 10, end="]  ")
         print('[steer=', steer, end="]  ")
+        print('[waiting=', waiting, end="]  ")
         print('[velocity=', velocity, "]")
         print()
 
@@ -31,6 +32,9 @@ class MyCar:
 
     def getVel(self):
         return 40
+
+    def leftVDiff(V):
+        return [V[1] - V[0], V[2] - V[1]]
 
     def linear(self, L, R, V):
         # 각 변수의 최댓값

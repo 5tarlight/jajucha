@@ -4,7 +4,7 @@ import math
 class MyCar:
     def __init__(self) -> None:
         self.w = math.pi
-        self.b = -16
+        self.b = 16
         print('My Car Initiatied')
 
     def displayData(self, L, R, V, frontLidar, rearLidar, e, steer, velocity, waiting):

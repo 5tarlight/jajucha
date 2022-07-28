@@ -1,3 +1,4 @@
+from cgitb import reset
 from jajucha.planning import BasePlanning
 from jajucha.graphics import Graphics
 from jajucha.control import mtx
@@ -18,6 +19,7 @@ class Planning(BasePlanning):
         self.vars.steer = 0
         self.vars.velocity = 0
         self.waiting = False
+        self.resent = 'none'
         self.my = MyCar()
 
     def process(self, t, frontImage, rearImage, frontLidar, rearLidar):
@@ -50,10 +52,14 @@ class Planning(BasePlanning):
         if road == 'linear':
             steer, e, velocity = self.my.linear(L, R, V)
         elif road == 'left':
+            self.resent = 'left'
+            
             e = -9999
             steer = -50 + self.my.b
             velocity = self.my.getVel(V, True)
         elif road == 'right':
+            self.resent = 'right'
+            
             e = 9999
             steer = 50 + self.my.b
             velocity = self.my.getVel(V, True)
@@ -68,10 +74,14 @@ class Planning(BasePlanning):
         elif self.waiting:
             self.waiting = False
 
-        if velocity < 0:
-            steer = -steer
-        elif velocity == 0:
-            steer = self.my.b
+        print(self.resent)
+        if velocity <= 0:
+            if self.resent == 'left':
+                steer = 60 + self.my.b
+            elif self.resent == 'right':
+                steer = -60 + self.my.b
+            else:
+                steer = (-(steer - self.my.b) + self.my.b) * 2
 
         self.my.displayData(L, R, V, frontLidar, rearLidar,
                             e, steer, velocity, self.waiting)

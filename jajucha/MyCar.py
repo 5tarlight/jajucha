@@ -42,26 +42,26 @@ class MyCar:
                     self.stop = True
                     return 0
                 else:
-                    return -40 # -30
+                    return -20 # -30
             else:
                 if not self.stop:
                     self.stop = True
                     return 0
                 else:
-                    return -40
+                    return -20
         else:
             self.back = False
             self.stop = False
                               
             if turn:
-                if V[3] < 50:
+                if V[3] < 10:
                     self.back = True
-                    return -40 # -30
+                    return -20 # -30
                 return 40 # 30
             else:
-                if V[3] < 50:
+                if V[3] < 10:
                     self.back = True
-                    return -40
+                    return -20
                 return 40
 
     def leftVDiff(seft, V):
@@ -99,9 +99,9 @@ class MyCar:
         else:
             copyV = V
         
-        if (sorted(copyV) == copyV and R[2] > 315):
+        if (sorted(copyV) == copyV and R[2] > 315 and V[0] < 10):
             return 'right'
-        elif (sorted(copyV, reverse=True) == copyV and L[2] > 315):
+        elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 10):
             return 'left'
         else:
             return 'linear'

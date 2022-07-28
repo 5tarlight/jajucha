@@ -1,3 +1,4 @@
+from copy import copy
 import math
 
 
@@ -5,6 +6,8 @@ class MyCar:
     def __init__(self) -> None:
         self.w = math.pi
         self.b = 16
+        self.back = False
+        self.stop = False
         print('My Car Initiatied')
 
     def displayData(self, L, R, V, frontLidar, rearLidar, e, steer, velocity, waiting):
@@ -19,6 +22,7 @@ class MyCar:
         print('[waiting=', waiting, end="]  ")
         print('[velocity=', velocity, "]")
         print('[road=', self.checkRoad(V, L, R), "]")
+        print('[back=', self.back, "]")
         print()
 
     def getSteer(self, e):
@@ -31,8 +35,34 @@ class MyCar:
 
         return steer
 
-    def getVel(self):
-        return 40
+    def getVel(self, V, turn = False):
+        if self.back and V[3] < 100:
+            if turn:
+                if not self.stop:
+                    self.stop = True
+                    return 0
+                else:
+                    return -40 # -30
+            else:
+                if not self.stop:
+                    self.stop = True
+                    return 0
+                else:
+                    return -40
+        else:
+            self.back = False
+            self.stop = False
+                              
+            if turn:
+                if V[3] < 50:
+                    self.back = True
+                    return -40 # -30
+                return 40 # 30
+            else:
+                if V[3] < 50:
+                    self.back = True
+                    return -40
+                return 40
 
     def leftVDiff(seft, V):
         return [V[1] - V[0], V[2] - V[1]]
@@ -41,20 +71,38 @@ class MyCar:
         return [V[1+4] - V[0+4], V[2+4] - V[1+4]]
 
     def checkRoad(self, V, L, R):
-        leftV = self.leftVDiff(V)
-        rightV = self.rightVDiff(V)
+        # leftV = self.leftVDiff(V)
+        # rightV = self.rightVDiff(V)
 
-        if (
-            (sorted(leftV, reverse=True) == leftV) and
-            (sorted(rightV, reverse=True) == rightV) and
-            leftV[-1] > rightV[0]
-        ):
-            return 'left'
-        elif ((sorted(leftV) == leftV) and
-              (sorted(rightV) == rightV) and
-              leftV[-1] < rightV[0]
-              ):
+        # if (
+        #     (sorte
+        # d(leftV, reverse=True) == leftV) and
+        #     (sorted(rightV, reverse=True) == rightV) and
+        #     leftV[-1] > rightV[0]
+        # ):
+        #     return 'left'
+        # elif ((sorted(leftV) == leftV) and
+        #       (sorted(rightV) == rightV) and
+        #       leftV[-1] < rightV[0]
+        #       ):
+        #     return 'right'
+        # else:
+        #     return 'linear'
+        
+        copyV = 0
+        if V[0] > V[1] and V[-1] > V[-2]:
+            copyV = V[1:-2]
+        elif V[0] > V[1]:
+            copyV = V[1:]
+        elif V[-1] > V[-2]:
+            copyV = V[:-1]
+        else:
+            copyV = V
+        
+        if (sorted(copyV) == copyV and R[2] > 315):
             return 'right'
+        elif (sorted(copyV, reverse=True) == copyV and L[2] > 315):
+            return 'left'
         else:
             return 'linear'
 
@@ -113,6 +161,6 @@ class MyCar:
             e = (d2 - d1) * 0.7
 
         steer = self.getSteer(e)
-        velocity = self.getVel()
+        velocity = self.getVel(V)
 
         return steer, e, velocity

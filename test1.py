@@ -50,13 +50,13 @@ class Planning(BasePlanning):
         if road == 'linear':
             steer, e, velocity = self.my.linear(L, R, V)
         elif road == 'left':
-            e = -90
-            steer = self.my.getSteer(e)
-            velocity = 40
+            e = -9999
+            steer = -50 + self.my.b
+            velocity = self.my.getVel(V, True)
         elif road == 'right':
-            e = 90
-            steer = self.my.getSteer(e)
-            velocity = 40
+            e = 9999
+            steer = 50 + self.my.b
+            velocity = self.my.getVel(V, True)
 
         if not self.waiting and frontLidar < 200 and frontLidar > 0:
             velocity = 0
@@ -68,16 +68,17 @@ class Planning(BasePlanning):
         elif self.waiting:
             self.waiting = False
 
-        if velocity == 0:
+        if velocity < 0:
+            steer = -steer
+        elif velocity == 0:
             steer = self.my.b
 
         self.my.displayData(L, R, V, frontLidar, rearLidar,
                             e, steer, velocity, self.waiting)
-
+ 
         self.vars.steer = steer
         self.vars.velocity = velocity
         return self.vars.steer, self.vars.velocity
-
 
 if __name__ == "__main__":
     g = Graphics(Planning)  # 자주차 컨트롤러 실행

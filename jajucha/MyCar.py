@@ -6,16 +6,26 @@ class MyCar:
         self.w = math.pi
         self.b = 16
 
+        # 최대 조향
         self.maxSteer = 100
+        # 최소 조향
         self.minSteer = -100
+        # 기본 속도
         self.normalVel = 100
+        # 후진 속도
         self.backVel = -50
+        # 후진 회전 속도
         self.turnBackVel = -50
+        # 정지 속도
         self.stopVel = 0
+        # 거리유지 후진 시작 거리
         self.backStartDistant = 10
+        # 거리유지 후진 종료
         self.backEndDistant = 100
 
+        # 후진 상태
         self.back = False
+        # 정지 상태
         self.stop = False
         print('My Car Initiatied')
 

@@ -8,8 +8,13 @@ class Planning(BasePlanning):
     def __init__(self, graphics):
         super().__init__(graphics)
         # --------------------------- #
+        # 정지거리
         self.stopLidar = 200
+        # 좌우회전 조향
         self.turnSteer = 50
+        # 좌우회전 후진 역조향
+        self.backSteer = 60
+        # 후진 역조향 계수
         self.turnSteerMultiplier = 2
 
         self.vars.redCnt = 0  # 변수 설정
@@ -73,7 +78,6 @@ class Planning(BasePlanning):
         elif self.waiting:
             self.waiting = False
 
-        print(self.resent)
         if velocity <= 0:
             if self.resent == 'left':
                 steer = 60 + self.my.b

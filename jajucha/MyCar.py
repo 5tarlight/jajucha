@@ -1,4 +1,3 @@
-from copy import copy
 import math
 
 
@@ -6,6 +5,16 @@ class MyCar:
     def __init__(self) -> None:
         self.w = math.pi
         self.b = 16
+
+        self.maxSteer = 100
+        self.minSteer = -100
+        self.normalVel = 100
+        self.backVel = -50
+        self.turnBackVel = -50
+        self.stopVel = 0
+        self.backStartDistant = 10
+        self.backEndDistant = 100
+
         self.back = False
         self.stop = False
         print('My Car Initiatied')
@@ -28,47 +37,36 @@ class MyCar:
     def getSteer(self, e):
         steer = int(e / self.w) + self.b
 
-        if steer > 100:
-            steer = 100
-        elif steer < -100:
-            steer = -100
+        return max(self.minSteer, min(self.maxSteer, steer))
 
-        return steer
-
-    def getVel(self, V, turn = False):
-        if self.back and V[3] < 100:
+    def getVel(self, V, turn=False):
+        if self.back and V[3] < self.backEndDistant:
             if turn:
                 if not self.stop:
                     self.stop = True
-                    return 0
+                    return self.stopVel
                 else:
-                    return -20 # -30
+                    return self.turnBackVel
             else:
                 if not self.stop:
                     self.stop = True
-                    return 0
+                    return self.stopVel
                 else:
-                    return -20
+                    return self.backVel
         else:
             self.back = False
             self.stop = False
-                              
+
             if turn:
-                if V[3] < 10:
+                if V[3] < self.backStartDistant:
                     self.back = True
-                    return -20 # -30
-                return 40 # 30
+                    return self.turnBackVel
+                return self.normalVel
             else:
-                if V[3] < 10:
+                if V[3] < self.backStartDistant:
                     self.back = True
-                    return -20
-                return 40
-
-    def leftVDiff(seft, V):
-        return [V[1] - V[0], V[2] - V[1]]
-
-    def rightVDiff(self, V):
-        return [V[1+4] - V[0+4], V[2+4] - V[1+4]]
+                    return self.backVel
+                return self.normalVel
 
     def checkRoad(self, V, L, R):
         # leftV = self.leftVDiff(V)
@@ -88,7 +86,7 @@ class MyCar:
         #     return 'right'
         # else:
         #     return 'linear'
-        
+
         copyV = 0
         if V[0] > V[1] and V[-1] > V[-2]:
             copyV = V[1:-2]
@@ -98,7 +96,7 @@ class MyCar:
             copyV = V[:-1]
         else:
             copyV = V
-        
+
         if (sorted(copyV) == copyV and R[2] > 315 and V[0] < 10):
             return 'right'
         elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 10):

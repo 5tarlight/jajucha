@@ -1,18 +1,17 @@
-from cgitb import reset
 from jajucha.planning import BasePlanning
 from jajucha.graphics import Graphics
 from jajucha.control import mtx
 from jajucha.MyCar import MyCar
-import cv2
-import numpy as np
-import time
-import math
 
 
 class Planning(BasePlanning):
     def __init__(self, graphics):
         super().__init__(graphics)
         # --------------------------- #
+        self.stopLidar = 200
+        self.turnSteer = 50
+        self.turnSteerMultiplier = 2
+
         self.vars.redCnt = 0  # 변수 설정
         self.vars.greenCnt = 0  # 변수 설정
         self.vars.stop = True
@@ -53,15 +52,15 @@ class Planning(BasePlanning):
             steer, e, velocity = self.my.linear(L, R, V)
         elif road == 'left':
             self.resent = 'left'
-            
+
             e = -9999
-            steer = -50 + self.my.b
+            steer = -self.turnSteer + self.my.b
             velocity = self.my.getVel(V, True)
         elif road == 'right':
             self.resent = 'right'
-            
+
             e = 9999
-            steer = 50 + self.my.b
+            steer = self.turnSteer + self.my.b
             velocity = self.my.getVel(V, True)
 
         if not self.waiting and frontLidar < 200 and frontLidar > 0:
@@ -81,14 +80,16 @@ class Planning(BasePlanning):
             elif self.resent == 'right':
                 steer = -60 + self.my.b
             else:
-                steer = (-(steer - self.my.b) + self.my.b) * 2
+                steer = (-(steer - self.my.b) + self.my.b) * \
+                    self.turnSteerMultiplier
 
         self.my.displayData(L, R, V, frontLidar, rearLidar,
                             e, steer, velocity, self.waiting)
- 
+
         self.vars.steer = steer
         self.vars.velocity = velocity
         return self.vars.steer, self.vars.velocity
+
 
 if __name__ == "__main__":
     g = Graphics(Planning)  # 자주차 컨트롤러 실행

@@ -68,7 +68,7 @@ class Planning(BasePlanning):
             self.waiting = True
         elif self.waiting and frontLidar == 0:
             velocity = 0
-        elif self.waiting and frontLidar < 200:
+        elif self.waiting and frontLidar < self.stopLidar:
             velocity = 0
         elif self.waiting:
             self.waiting = False
@@ -84,7 +84,7 @@ class Planning(BasePlanning):
                     self.turnSteerMultiplier
 
         self.my.displayData(L, R, V, frontLidar, rearLidar,
-                            e, steer, velocity, self.waiting)
+                            e, steer, velocity, self.waiting, self.resent)
 
         self.vars.steer = steer
         self.vars.velocity = velocity

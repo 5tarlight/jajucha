@@ -19,7 +19,19 @@ class MyCar:
         self.stop = False
         print('My Car Initiatied')
 
-    def displayData(self, L, R, V, frontLidar, rearLidar, e, steer, velocity, waiting):
+    def displayData(
+        self,
+        L,
+        R,
+        V,
+        frontLidar,
+        rearLidar,
+        e,
+        steer,
+        velocity,
+        waiting,
+        resent
+    ):
         print('L[0]=', L[0], 'L[1]=', L[1], 'L[2]=', L[2], end="  //  ")
         print('R[0]=', R[0], 'R[1]=', R[1], 'R[2]=', R[2])
         print('V[0]=', V[0], 'V[1]=', V[1], 'V[2]=', V[2], 'V[3]=',
@@ -29,9 +41,10 @@ class MyCar:
         print('[e=', math.floor(e * 10) / 10, end="]  ")
         print('[steer=', steer, end="]  ")
         print('[waiting=', waiting, end="]  ")
-        print('[velocity=', velocity, "]")
-        print('[road=', self.checkRoad(V, L, R), "]")
-        print('[back=', self.back, "]")
+        print('[velocity=', velocity, end="]")
+        print('[road=', self.checkRoad(V, L, R), end="]")
+        print('[back=', self.back, end="]")
+        print('[back=', resent, "]")
         print()
 
     def getSteer(self, e):

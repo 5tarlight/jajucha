@@ -44,7 +44,7 @@ class MyCar:
         print('[velocity=', velocity, end="]")
         print('[road=', self.checkRoad(V, L, R), end="]")
         print('[back=', self.back, end="]")
-        print('[back=', resent, "]")
+        print('[resent=', resent, "]")
         print()
 
     def getSteer(self, e):

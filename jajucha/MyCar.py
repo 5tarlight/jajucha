@@ -4,24 +4,27 @@ import math
 class MyCar:
     def __init__(self) -> None:
         self.w = math.pi
-        self.b = 16
-
+        self.b = 6
         # 최대 조향
-        self.maxSteer = 100
+        self.maxSteer = 60
         # 최소 조향
-        self.minSteer = -100
+        self.minSteer = -60
         # 기본 속도
-        self.normalVel = 100
+        self.normalVel = 150
         # 후진 속도
-        self.backVel = -50
+        self.backVel = -70
         # 후진 회전 속도
-        self.turnBackVel = -50
+        self.turnBackVel = -70
         # 정지 속도
         self.stopVel = 0
         # 거리유지 후진 시작 거리
-        self.backStartDistant = 10
+        self.backStartDistant = 50
         # 거리유지 후진 종료
-        self.backEndDistant = 100
+        self.backEndDistant = 150
+        # 회전 전진속도
+        self.turnVel = 100
+        # 장애물 우회
+        self.vpn = False
 
         # 후진 상태
         self.back = False
@@ -51,9 +54,10 @@ class MyCar:
         print('[e=', math.floor(e * 10) / 10, end="]  ")
         print('[steer=', steer, end="]  ")
         print('[waiting=', waiting, end="]  ")
-        print('[velocity=', velocity, end="]")
-        print('[road=', self.checkRoad(V, L, R), end="]")
-        print('[back=', self.back, end="]")
+        print('[velocity=', velocity, end="] ")
+        print('[road=', self.checkRoad(V, L, R, 9999), end="] ")
+        print('[back=', self.back, end="] ")
+        print('[vpn=', self.vpn, end="] ") 
         print('[resent=', resent, "]")
         print()
 
@@ -84,14 +88,14 @@ class MyCar:
                 if V[3] < self.backStartDistant:
                     self.back = True
                     return self.turnBackVel
-                return self.normalVel
+                return self.turnVel
             else:
                 if V[3] < self.backStartDistant:
                     self.back = True
                     return self.backVel
                 return self.normalVel
 
-    def checkRoad(self, V, L, R):
+    def checkRoad(self, V, L, R, lidar):
         # leftV = self.leftVDiff(V)
         # rightV = self.rightVDiff(V)
 
@@ -119,13 +123,51 @@ class MyCar:
             copyV = V[:-1]
         else:
             copyV = V
-
-        if (sorted(copyV) == copyV and R[2] > 315 and V[0] < 10):
+        
+        
+        if self.vpn or lidar <= 400:
+            self.vpn = True
+            
+            countLeft, countRight = 0, 0
+            
+            for l in L:
+                if l > 315:
+                    countLeft += 1
+                    
+            for r in R:
+                if r > 315:
+                    countRight += 1
+        
+            print(countLeft, countRight)
+        
+            if countLeft < countRight:
+                return 'right'
+            elif countRight < countLeft:
+                return 'left'
+            else:
+                return 'linear'
+            
+            # leftDif = V[1] - V[0]
+            # rightDif = V[-2] - V[-1]
+            
+            # if leftDif > 40 and rightDif < 15:
+            #     return 'right'
+            # elif leftDif < 15 and rightDif > 40:
+            #     return 'left'
+            # else:
+            #     self.vpn = False
+            #     return 'linear'
+        elif (sorted(copyV) == copyV and R[2] > 315 and V[0] < 120):
+            # if (sorted(copyV) == copyV and R[2] > 315):
             return 'right'
-        elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 10):
+        elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 120):
+        # elif (sorted(copyV, reverse=True) == copyV and L[2] > 315):
             return 'left'
         else:
             return 'linear'
+
+    def limitSteer(self, steer):
+        return max(self.minSteer, min(self.maxSteer, steer))
 
     def linear(self, L, R, V):
         # 각 변수의 최댓값

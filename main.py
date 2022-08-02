@@ -9,13 +9,13 @@ class Planning(BasePlanning):
         super().__init__(graphics)
         # --------------------------- #
         # 정지거리
-        self.stopLidar = 200
+        self.stopLidar = 50
         # 좌우회전 조향
         self.turnSteer = 50
         # 좌우회전 후진 역조향
         self.backSteer = 60
         # 후진 역조향 계수
-        self.turnSteerMultiplier = 2
+        self. turnSteerMultiplier = 1.2
 
         self.vars.redCnt = 0  # 변수 설정
         self.vars.greenCnt = 0  # 변수 설정
@@ -51,7 +51,7 @@ class Planning(BasePlanning):
         # L[0], L[1], L[2], R[0], R[1], R[2], V[0]~v[6]
 
         steer, e, velocity = 0, 0, 0
-        road = self.my.checkRoad(V, L, R)
+        road = self.my.checkRoad(V, L, R, lidar=frontLidar)
 
         if road == 'linear':
             steer, e, velocity = self.my.linear(L, R, V)
@@ -68,21 +68,22 @@ class Planning(BasePlanning):
             steer = self.turnSteer + self.my.b
             velocity = self.my.getVel(V, True)
 
-        if not self.waiting and frontLidar < 200 and frontLidar > 0:
-            velocity = 0
-            self.waiting = True
-        elif self.waiting and frontLidar == 0:
-            velocity = 0
-        elif self.waiting and frontLidar < self.stopLidar:
-            velocity = 0
-        elif self.waiting:
-            self.waiting = False
+        if not self.my.vpn:
+            if not self.waiting and frontLidar < 200 and frontLidar > 0:
+                velocity = 0
+                self.waiting = True
+            elif self.waiting and frontLidar == 0:
+                velocity = 0
+            elif self.waiting and frontLidar < self.stopLidar:
+                velocity = 0
+            elif self.waiting:
+                self.waiting = False
 
         if velocity <= 0:
             if self.resent == 'left':
-                steer = 60 + self.my.b
+                steer = self.turnSteer * self.turnSteerMultiplier + self.my.b
             elif self.resent == 'right':
-                steer = -60 + self.my.b
+                steer = -self.turnSteer * self.turnSteerMultiplier + self.my.b
             else:
                 steer = (-(steer - self.my.b) + self.my.b) * \
                     self.turnSteerMultiplier
@@ -90,7 +91,7 @@ class Planning(BasePlanning):
         self.my.displayData(L, R, V, frontLidar, rearLidar,
                             e, steer, velocity, self.waiting, self.resent)
 
-        self.vars.steer = steer
+        self.vars.steer = self.my.limitSteer(steer)
         self.vars.velocity = velocity
         return self.vars.steer, self.vars.velocity
 

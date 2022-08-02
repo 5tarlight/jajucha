@@ -50,7 +50,7 @@ class Planning(BasePlanning):
         # [2] 주행 처리
         if L[2] < 325:  # L[2]는 잡히고 R[2]는 잡히지 않은 경우
             #print ('Left Line', end="// ")
-            e = 334 - L[2]
+            e = L[2] - 300
 
         # 둘 다 잡히지 않은 경우
         else:
@@ -65,8 +65,7 @@ class Planning(BasePlanning):
             steer = 100
         elif steer < -100:
             steer = -100
-        steer = 0
-        velocity = 40
+        velocity = 500
 
         print('L[0]=', L[0], 'L[1]=', L[1], 'L[2]=', L[2], end="  //  ")
         print('R[0]=', R[0], 'R[1]=', R[1], 'R[2]=', R[2])

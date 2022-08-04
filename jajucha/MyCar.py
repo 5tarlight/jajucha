@@ -6,23 +6,23 @@ class MyCar:
         self.w = math.pi
         self.b = 6
         # 최대 조향
-        self.maxSteer = 60
+        self.maxSteer = 70
         # 최소 조향
-        self.minSteer = -60
+        self.minSteer = -70
         # 기본 속도
         self.normalVel = 150
         # 후진 속도
-        self.backVel = -70
+        self.backVel = -120
         # 후진 회전 속도
-        self.turnBackVel = -70
+        self.turnBackVel = -100
         # 정지 속도
         self.stopVel = 0
         # 거리유지 후진 시작 거리
-        self.backStartDistant = 50
+        self.backStartDistant = 70
         # 거리유지 후진 종료
         self.backEndDistant = 150
         # 회전 전진속도
-        self.turnVel = 100
+        self.turnVel = 120
         # 장애물 우회
         self.vpn = False
 
@@ -89,7 +89,7 @@ class MyCar:
                     self.back = True
                     return self.turnBackVel
                 return self.turnVel
-            else:
+            else:   
                 if V[3] < self.backStartDistant:
                     self.back = True
                     return self.backVel
@@ -125,39 +125,29 @@ class MyCar:
             copyV = V
         
         
-        if self.vpn or lidar <= 400:
-            self.vpn = True
+        # if self.vpn or lidar <= 400:
+        #     self.vpn = True
             
-            countLeft, countRight = 0, 0
+        #     countLeft, countRight = 0, 0
             
-            for l in L:
-                if l > 315:
-                    countLeft += 1
+        #     for l in L:
+        #         if l > 315:
+        #             countLeft += 1
                     
-            for r in R:
-                if r > 315:
-                    countRight += 1
+        #     for r in R:
+        #         if r > 315:
+        #             countRight += 1
         
-            print(countLeft, countRight)
+        #     print(countLeft, countRight)
         
-            if countLeft < countRight:
-                return 'right'
-            elif countRight < countLeft:
-                return 'left'
-            else:
-                return 'linear'
-            
-            # leftDif = V[1] - V[0]
-            # rightDif = V[-2] - V[-1]
-            
-            # if leftDif > 40 and rightDif < 15:
-            #     return 'right'
-            # elif leftDif < 15 and rightDif > 40:
-            #     return 'left'
-            # else:
-            #     self.vpn = False
-            #     return 'linear'
-        elif (sorted(copyV) == copyV and R[2] > 315 and V[0] < 120):
+        #     if countLeft < countRight:
+        #         return 'right'
+        #     elif countRight < countLeft:
+        #         return 'left'
+        #     else:
+        #         self.vpn = False
+        #         return 'linear'
+        if (sorted(copyV) == copyV and R[2] > 315 and V[0] < 120):
             # if (sorted(copyV) == copyV and R[2] > 315):
             return 'right'
         elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 120):

@@ -11,11 +11,11 @@ class Planning(BasePlanning):
         # 정지거리
         self.stopLidar = 50
         # 좌우회전 조향
-        self.turnSteer = 50
+        self.turnSteer = 55
         # 좌우회전 후진 역조향
-        self.backSteer = 60
+        self.backSteer = 65
         # 후진 역조향 계수
-        self. turnSteerMultiplier = 1.2
+        self. turnSteerMultiplier = 1.21
 
         self.vars.redCnt = 0  # 변수 설정
         self.vars.greenCnt = 0  # 변수 설정
@@ -69,7 +69,7 @@ class Planning(BasePlanning):
             velocity = self.my.getVel(V, True)
 
         if not self.my.vpn:
-            if not self.waiting and frontLidar < 200 and frontLidar > 0:
+            if not self.waiting and frontLidar < self.stopLidar and frontLidar > 0:
                 velocity = 0
                 self.waiting = True
             elif self.waiting and frontLidar == 0:

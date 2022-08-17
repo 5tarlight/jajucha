@@ -57,7 +57,7 @@ class MyCar:
         print('[velocity=', velocity, end="] ")
         print('[road=', self.checkRoad(V, L, R, 9999), end="] ")
         print('[back=', self.back, end="] ")
-        print('[vpn=', self.vpn, end="] ") 
+        print('[vpn=', self.vpn, end="] ")
         print('[resent=', resent, "]")
         print()
 
@@ -89,7 +89,7 @@ class MyCar:
                     self.back = True
                     return self.turnBackVel
                 return self.turnVel
-            else:   
+            else:
                 if V[3] < self.backStartDistant:
                     self.back = True
                     return self.backVel
@@ -123,23 +123,22 @@ class MyCar:
             copyV = V[:-1]
         else:
             copyV = V
-        
-        
+
         # if self.vpn or lidar <= 400:
         #     self.vpn = True
-            
+
         #     countLeft, countRight = 0, 0
-            
+
         #     for l in L:
         #         if l > 315:
         #             countLeft += 1
-                    
+
         #     for r in R:
         #         if r > 315:
         #             countRight += 1
-        
+
         #     print(countLeft, countRight)
-        
+
         #     if countLeft < countRight:
         #         return 'right'
         #     elif countRight < countLeft:
@@ -151,7 +150,7 @@ class MyCar:
             # if (sorted(copyV) == copyV and R[2] > 315):
             return 'right'
         elif (sorted(copyV, reverse=True) == copyV and L[2] > 315 and V[-1] < 120):
-        # elif (sorted(copyV, reverse=True) == copyV and L[2] > 315):
+            # elif (sorted(copyV, reverse=True) == copyV and L[2] > 315):
             return 'left'
         else:
             return 'linear'
